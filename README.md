@@ -19,8 +19,8 @@ This project builds the macro "satellite" models that bank credit-risk teams use
 | 3 | [`03_model_development`](notebooks/03_model_development.ipynb) | Candidate drivers and lags, economic sign rules, exhaustive search, AIC/BIC, VIF | ✅ |
 | 4 | [`04_diagnostics`](notebooks/04_diagnostics.ipynb) | Residual tests, influential quarters, HAC errors, WLS, transforms, robust regression, structural breaks | ✅ |
 | 5 | [`05_regularisation_panel`](notebooks/05_regularisation_panel.ipynb) | Ridge / Lasso / Elastic Net with time-series CV; pooled panel with fixed effects | ✅ |
-| 6 | `06_validation` | Out-of-time backtests (2008, 2020), bootstrap, quantile regression, sensitivity, challenger model | ⏳ |
-| 7 | `07_scenario_projection` | Loss paths under the 2025 scenario with prediction intervals, £bn losses, reverse stress test | ⏳ |
+| 6 | [`06_validation`](notebooks/06_validation.ipynb) | Out-of-time backtests (2008, 2020), bootstrap, quantile regression, sensitivity, challenger model | ✅ |
+| 7 | [`07_scenario_projection`](notebooks/07_scenario_projection.ipynb) | Loss paths under the 2025 scenario with prediction intervals, £bn losses, reverse stress test | ✅ |
 
 ## Data
 

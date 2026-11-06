@@ -121,7 +121,8 @@ class FittedModel:
     @classmethod
     def from_dict(cls, d: dict) -> FittedModel:
         spec = Spec.from_dict(d["spec"])
-        params = pd.Series(d["params"])[spec.names]
+        params = pd.Series(d["params"])
+        params = params[[c for c in spec.names if c in params.index]]
         cov = pd.DataFrame(d["cov"], index=params.index, columns=params.index)
         resid = pd.Series(d["resid"])
         resid.index = pd.PeriodIndex(resid.index, freq="Q")
@@ -132,6 +133,8 @@ class FittedModel:
 def fit(spec: Spec, y, macro, start=SAMPLE_START, end=None, hac_lags: int = HAC_LAGS):
     """OLS with Newey-West covariance. Returns (FittedModel, statsmodels results)."""
     yy, X = sample(spec, y, macro, start, end)
+    if spec.covid and not X["covid"].any():  # sample ends before COVID: the dummy is all zeros
+        X = X.drop(columns="covid")
     res = sm.OLS(yy, X).fit(cov_type="HAC", cov_kwds={"maxlags": hac_lags})
     fm = FittedModel(spec, res.params, res.cov_params(), res.resid, int(res.nobs),
                      float(res.rsquared_adj), float(res.aic), float(res.bic),
@@ -187,6 +190,8 @@ def search(portfolio: str, panel: pd.DataFrame, macro: pd.DataFrame, max_terms: 
     rows = []
     for spec in candidate_specs(portfolio, max_terms):
         yy, X = sample(spec, y, macro, end=end)
+        if spec.covid and not X["covid"].any():  # sample ends before COVID
+            X = X.drop(columns="covid")
         beta, *_ = np.linalg.lstsq(X.values, yy.values, rcond=None)
         params = pd.Series(beta, index=X.columns)
         row = {"spec": spec, "terms": len(spec.terms), "dynamic": spec.dynamic,
@@ -198,7 +203,7 @@ def search(portfolio: str, panel: pd.DataFrame, macro: pd.DataFrame, max_terms: 
                     "bic": float(res.bic), "aic": float(res.aic), "r2_adj": float(res.rsquared_adj),
                     "nobs": int(res.nobs)}
             if not spec.dynamic:
-                row["coint_p"] = float(coint(yy, X.drop(columns=["const", "covid"]),
+                row["coint_p"] = float(coint(yy, X.drop(columns=["const", "covid"], errors="ignore"),
                                              trend="c")[1])
         rows.append(row)
     out = pd.DataFrame(rows)
@@ -228,7 +233,7 @@ def project(fm: FittedModel, y_hist: pd.Series, macro_path: pd.DataFrame, start=
         idx = idx[idx <= pd.Period(end, freq="Q")]
     spec = fm.spec
     y = y_hist.copy().loc[:start]
-    X = design(spec, y.reindex(y.index.union(idx)), macro_path, index=idx)
+    X = design(spec, y.reindex(y.index.union(idx)), macro_path, index=idx)[fm.params.index]
 
     def run(beta: pd.Series, shocks: np.ndarray) -> np.ndarray:
         yy = y.reindex(y.index.union(idx)).copy()
