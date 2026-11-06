@@ -22,6 +22,7 @@ from ukstress.config import (
     BOE_DIR,
     BOE_RATES,
     FIRST_QUARTER,
+    MACRO_PATH,
     ONS_DIR,
     ONS_SERIES,
     PANEL_PATH,
@@ -73,10 +74,30 @@ def load_macro() -> pd.DataFrame:
     return pd.DataFrame(cols)
 
 
-def build_panel() -> pd.DataFrame:
+def build_macro(start: str = "1990Q1") -> pd.DataFrame:
+    """Macro drivers on a quarterly index from ``start`` (earlier than the loss data, for lags)."""
     boe, macro = load_boe(), load_macro()
+    idx = pd.period_range(start, max(boe.index.max(), macro.index.max()), freq="Q")
+    macro = macro.reindex(pd.period_range(macro.index.min(), idx.max(), freq="Q"))
+    out = pd.DataFrame(index=idx)
+    out.index.name = "quarter"
+    out["unemployment"] = macro["unemployment"]
+    out["gdp_growth_yoy"] = 100 * macro["real_gdp"].pct_change(4, fill_method=None)
+    out["cpi_inflation"] = macro["cpi_inflation"]
+    hpi = macro["house_price_index"]
+    out["house_price_growth_yoy"] = 100 * hpi.pct_change(4, fill_method=None)
+    for code, col in BOE_RATES.items():
+        out[col] = boe[code].reindex(idx)
+    out["unemployment_chg_yoy"] = out["unemployment"].diff(4)
+    out["bank_rate_chg_yoy"] = out["bank_rate"].diff(4)
+    return out.loc[out.index >= pd.Period(start, freq="Q")]
+
+
+def build_panel() -> pd.DataFrame:
+    boe = load_boe()
+    macro = build_macro()
     idx = pd.period_range(FIRST_QUARTER, max(boe.index.max(), macro.index.max()), freq="Q")
-    boe, macro = boe.reindex(idx), macro.reindex(idx)
+    boe = boe.reindex(idx)
     panel = pd.DataFrame(index=idx)
     panel.index.name = "quarter"
 
@@ -87,17 +108,7 @@ def build_panel() -> pd.DataFrame:
         panel[f"bal_{name}"] = bal
         panel[f"lr_{name}"] = 400 * wo / bal.shift(1)  # annualised % of lagged balance
 
-    # Macro drivers, in the units the 2025 stress scenario is expressed in
-    panel["unemployment"] = macro["unemployment"]
-    panel["gdp_growth_yoy"] = 100 * macro["real_gdp"].pct_change(4, fill_method=None)
-    panel["cpi_inflation"] = macro["cpi_inflation"]
-    hpi = macro["house_price_index"]
-    panel["house_price_growth_yoy"] = 100 * hpi.pct_change(4, fill_method=None)
-    for code, col in BOE_RATES.items():
-        panel[col] = boe[code]
-    panel["unemployment_chg_yoy"] = panel["unemployment"].diff(4)
-    panel["bank_rate_chg_yoy"] = panel["bank_rate"].diff(4)
-
+    panel = panel.join(macro)
     # Keep quarters where at least one loss rate is observed
     lr_cols = [c for c in panel if c.startswith("lr_")]
     panel = panel.loc[panel[lr_cols].notna().any(axis=1)]
@@ -110,6 +121,7 @@ def main() -> None:
     panel = build_panel()
     PANEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     panel.to_parquet(PANEL_PATH)
+    build_macro().to_parquet(MACRO_PATH)
     first, last = panel.index[0], panel.index[-1]
     log.info("wrote %s: %d quarters (%s to %s)", PANEL_PATH, len(panel), first, last)
 

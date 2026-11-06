@@ -8,15 +8,15 @@ The scenario: UK GDP −5%, unemployment 8.5%, house prices −28%, Bank Rate 8%
 
 This project builds the macro "satellite" models that bank credit-risk teams use for Bank of England stress tests and IFRS 9 provisioning. These models are regressions linking portfolio loss rates to the economy. The project then projects losses under the official 2025 scenario and documents the models to the standard of the PRA's model risk principles (SS1/23).
 
-> Status: **Stage 1 of 7 complete:** data pipeline, data contract, from-scratch OLS engine, exploratory analysis.
+> Status: **Stages 1–3 of 7 complete:** data pipeline, exploratory analysis, OLS from scratch, satellite model selection.
 
 ## Plan
 
 | Stage | Notebook | Content | Status |
 |---|---|---|---|
 | 1 | [`01_eda`](notebooks/01_eda.ipynb) | Loss-rate construction, data breaks, credit cycles, lead–lag, stationarity, scenario vs history | ✅ |
-| 2 | `02_ols_from_scratch` | Normal equation (QR), gradient descent, robust errors, checked against statsmodels | ⏳ |
-| 3 | `03_model_development` | Candidate drivers and lags, economic sign rules, exhaustive search, AIC/BIC, VIF | ⏳ |
+| 2 | [`02_ols_from_scratch`](notebooks/02_ols_from_scratch.ipynb) | Normal equation (QR), gradient descent, robust errors, checked against statsmodels | ✅ |
+| 3 | [`03_model_development`](notebooks/03_model_development.ipynb) | Candidate drivers and lags, economic sign rules, exhaustive search, AIC/BIC, VIF | ✅ |
 | 4 | `04_diagnostics` | Residual tests, influential quarters, HAC errors, WLS, transforms, robust regression, structural breaks | ⏳ |
 | 5 | `05_regularisation_panel` | Ridge / Lasso / Elastic Net with time-series CV; pooled panel with fixed effects | ⏳ |
 | 6 | `06_validation` | Out-of-time backtests (2008, 2020), bootstrap, quantile regression, sensitivity, challenger model | ⏳ |

@@ -13,6 +13,8 @@ BCST_PATHS_FILE = STRESS_DIR / "bcst2025_variable_paths.xlsx"
 UKHPI_FILE = HMLR_DIR / "ukhpi_united_kingdom.csv"
 PROCESSED_DIR = DATA_DIR / "processed"
 PANEL_PATH = PROCESSED_DIR / "quarterly_panel.parquet"
+MACRO_PATH = PROCESSED_DIR / "macro_history.parquet"
+MODELS_DIR = ROOT / "models"
 FIGURES_DIR = ROOT / "reports" / "figures"
 
 # Portfolios modelled. Write-offs (Bankstats C2.1, sterling, NSA, £m in the quarter) are divided

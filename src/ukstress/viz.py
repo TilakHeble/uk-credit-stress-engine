@@ -96,5 +96,5 @@ def fig_title(fig, title: str, sub: str | None = None) -> None:
     top = 1 - 0.45 / h
     if sub:
         fig.text(0.01, 1 - 0.40 / h, sub, ha="left", va="top", color=TEXT_2, fontsize=9.5)
-        top = 1 - 0.62 / h
+        top = 1 - 0.55 / h
     fig.tight_layout(rect=(0, 0, 1, top))

@@ -47,7 +47,8 @@ def add_constant(X: np.ndarray) -> np.ndarray:
     return np.column_stack([np.ones(len(X)), X])
 
 
-def fit_ols(X: np.ndarray, y: np.ndarray, cov_type: str = "nonrobust", names=None) -> OLSResult:
+def fit_ols(X: np.ndarray, y: np.ndarray, cov_type: str = "nonrobust", names=None,
+            maxlags: int = 4) -> OLSResult:
     """Fit OLS. ``X`` must already include a constant column if one is wanted.
 
     The coefficients come from a QR decomposition (X = QR, so R beta = Q'y). This is numerically
@@ -67,6 +68,8 @@ def fit_ols(X: np.ndarray, y: np.ndarray, cov_type: str = "nonrobust", names=Non
 
     if cov_type == "nonrobust":
         cov = sigma2 * xtx_inv
+    elif cov_type == "HAC":
+        cov = newey_west(X, resid, maxlags)  # statsmodels default: no small-sample correction
     elif cov_type in ("HC0", "HC1"):
         meat = X.T @ (X * resid[:, None] ** 2)
         cov = xtx_inv @ meat @ xtx_inv
@@ -90,6 +93,35 @@ def fit_ols(X: np.ndarray, y: np.ndarray, cov_type: str = "nonrobust", names=Non
     f_pvalue = stats.f.sf(fvalue, df_model, df_resid)
     return OLSResult(beta, bse, tvalues, pvalues, resid, fitted, sigma2, r2, r2_adj, fvalue,
                      f_pvalue, n, df_resid, cov, list(names or []))
+
+
+def newey_west(X: np.ndarray, resid: np.ndarray, maxlags: int) -> np.ndarray:
+    """Newey-West (HAC) covariance with Bartlett weights w_l = 1 - l / (L + 1).
+
+    The "meat" adds weighted autocovariances of the score x_t * e_t up to ``maxlags`` quarters,
+    so it stays valid when residuals are autocorrelated (as overlapping trailing rates are).
+    """
+    X = np.asarray(X, float)
+    u = X * np.asarray(resid, float)[:, None]
+    meat = u.T @ u
+    for lag in range(1, maxlags + 1):
+        w = 1 - lag / (maxlags + 1)
+        g = u[lag:].T @ u[:-lag]
+        meat += w * (g + g.T)
+    bread = np.linalg.inv(X.T @ X)
+    return bread @ meat @ bread
+
+
+def f_test_nested(rss_restricted: float, rss_full: float, q: int, df_resid_full: int):
+    """F = ((RSS_r - RSS_f) / q) / (RSS_f / df_f) for q linear restrictions."""
+    f = ((rss_restricted - rss_full) / q) / (rss_full / df_resid_full)
+    return f, stats.f.sf(f, q, df_resid_full)
+
+
+def information_criteria(rss: float, n: int, k: int) -> tuple[float, float]:
+    """Gaussian log-likelihood based AIC and BIC (statsmodels' definitions)."""
+    llf = -n / 2 * (np.log(2 * np.pi) + np.log(rss / n) + 1)
+    return -2 * llf + 2 * k, -2 * llf + np.log(n) * k
 
 
 def fit_gradient_descent(X, y, lr: float = 0.1, n_iter: int = 20_000, tol: float = 1e-12):

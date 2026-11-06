@@ -21,11 +21,12 @@ def data():
     return add_constant(x), y
 
 
-@pytest.mark.parametrize("cov", ["nonrobust", "HC0", "HC1"])
+@pytest.mark.parametrize("cov", ["nonrobust", "HC0", "HC1", "HAC"])
 def test_matches_statsmodels(data, cov):
     X, y = data
     ours = fit_ols(X, y, cov_type=cov)
-    ref = sm.OLS(y, X).fit(cov_type=cov, use_t=True)  # t-based p-values, like ours
+    kw = {"cov_kwds": {"maxlags": 4}} if cov == "HAC" else {}
+    ref = sm.OLS(y, X).fit(cov_type=cov, use_t=True, **kw)  # t-based p-values, like ours
     np.testing.assert_allclose(ours.params, ref.params, rtol=1e-10)
     np.testing.assert_allclose(ours.bse, ref.bse, rtol=1e-10)
     np.testing.assert_allclose(ours.pvalues, ref.pvalues, rtol=1e-8, atol=1e-14)
@@ -56,3 +57,15 @@ def test_gradient_descent_converges_to_normal_equation(data):
 def test_rejects_underdetermined():
     with pytest.raises(ValueError):
         fit_ols(np.ones((3, 3)), np.ones(3))
+
+
+def test_nested_f_and_information_criteria_match_statsmodels(data):
+    from ukstress.models.ols_scratch import f_test_nested, information_criteria
+
+    X, y = data
+    full, restricted = sm.OLS(y, X).fit(), sm.OLS(y, X[:, :2]).fit()
+    f, p = f_test_nested(restricted.ssr, full.ssr, 2, int(full.df_resid))
+    ref_f, ref_p, _ = full.compare_f_test(restricted)
+    assert f == pytest.approx(ref_f) and p == pytest.approx(ref_p)
+    aic, bic = information_criteria(full.ssr, len(y), X.shape[1])
+    assert aic == pytest.approx(full.aic) and bic == pytest.approx(full.bic)
