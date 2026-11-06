@@ -10,7 +10,7 @@ test:
 	pytest -q
 
 lint:
-	ruff check src tests
+	ruff check src tests dashboards
 
 notebooks:
 	for nb in notebooks/*.ipynb; do jupyter nbconvert --to notebook --execute --inplace $$nb; done

@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -e ".[dev]"
-      - run: ruff check src tests
+      - run: pip install -e ".[dev,dashboard]"
+      - run: ruff check src tests dashboards
       - name: Build the panel from the committed raw data (data contract runs here)
         run: python -m ukstress.ingest.build_panel
       - run: pytest -q
