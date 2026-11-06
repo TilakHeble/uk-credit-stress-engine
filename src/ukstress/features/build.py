@@ -35,13 +35,23 @@ def trailing_loss_rate(panel: pd.DataFrame, portfolio: str) -> pd.Series:
     return (100 * wo / avg_bal).rename(f"lr4_{portfolio}")
 
 
+def _keep_type(x, values):
+    if isinstance(x, pd.Series):
+        return pd.Series(values, index=x.index, name=x.name)
+    if isinstance(x, pd.DataFrame):
+        return pd.DataFrame(values, index=x.index, columns=x.columns)
+    return values
+
+
 def logit_pct(rate_pct):
+    """Logit of a rate in %, clipped away from 0 and 100. Preserves pandas types."""
     p = np.clip(np.asarray(rate_pct, float) / 100, 1e-6, 1 - 1e-6)
-    return np.log(p / (1 - p))
+    return _keep_type(rate_pct, np.log(p / (1 - p)))
 
 
 def inv_logit_pct(z):
-    return 100 / (1 + np.exp(-np.asarray(z, float)))
+    """Inverse of ``logit_pct``: logit -> rate in %. Preserves pandas types."""
+    return _keep_type(z, 100 / (1 + np.exp(-np.asarray(z, float))))
 
 
 def covid_dummy(index: pd.PeriodIndex) -> pd.Series:
