@@ -1,5 +1,7 @@
 # UK Credit Stress Testing Engine
 
+[![ci](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml)
+
 **If the UK enters the Bank of England's 2025 stress scenario, how much would UK lenders lose on credit cards, personal loans, mortgages and corporate lending, and how sure can we be?**
 
 The scenario: UK GDP −5%, unemployment 8.5%, house prices −28%, Bank Rate 8%.
