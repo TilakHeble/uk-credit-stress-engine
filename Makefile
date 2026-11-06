@@ -13,7 +13,7 @@ lint:
 	ruff check src tests dashboards
 
 notebooks:
-	for nb in notebooks/*.ipynb; do jupyter nbconvert --to notebook --execute --inplace $$nb; done
+	for nb in notebooks/*.ipynb; do jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=1800 $$nb; done
 
 dashboard:
 	streamlit run dashboards/app.py
