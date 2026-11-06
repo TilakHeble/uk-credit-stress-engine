@@ -89,7 +89,7 @@ def money(decimals: int = 0):
 def fig_title(fig, title: str, sub: str | None = None) -> None:
     """Left-aligned figure title (+ optional grey subtitle) for multi-panel figures.
 
-    Positions are computed in inches so title and subtitle never collide, whatever the figure height.
+    Positions are in inches, so title and subtitle never collide at any figure height.
     """
     h = fig.get_figheight()
     fig.suptitle(title, x=0.01, y=1 - 0.08 / h, ha="left", va="top", fontweight="bold", fontsize=13)
