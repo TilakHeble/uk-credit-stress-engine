@@ -13,6 +13,7 @@ This project builds the macro **satellite models** that bank credit-risk teams u
 - 📘 [Model development document](docs/model_development_document.md): data, method, champion models, limitations
 - ✅ [Independent validation report](docs/validation_report.md): backtests, benchmark, findings, ratings
 - 📊 Interactive dashboard: `make dashboard` (scenario builder with severity and driver sliders)
+- 🎓 **[Learn linear regression](learn/README.md)**: a 10-lesson course from basics to bank-grade modelling, taught on this project's data, with practice questions, a cheat sheet and 40 interview questions
 - 📓 Notebooks [01](notebooks/01_eda.ipynb) · [02](notebooks/02_ols_from_scratch.ipynb) · [03](notebooks/03_model_development.ipynb) · [04](notebooks/04_diagnostics.ipynb) · [05](notebooks/05_regularisation_panel.ipynb) · [06](notebooks/06_validation.ipynb) · [07](notebooks/07_scenario_projection.ipynb)
 
 ```mermaid
@@ -102,7 +103,7 @@ All public and real, committed under the [Open Government Licence v3.0](https://
 ```bash
 make install     # pip install -e ".[dev,dashboard]"
 make panel       # build data/processed/ from data/raw (Pandera contract enforced)
-make test        # 24 tests: readers, data contract, OLS engine vs statsmodels, models, scenarios, dashboard
+make test        # 33 tests: readers, data contract, OLS engine vs statsmodels, models, scenarios, dashboard, course code
 make notebooks   # re-execute notebooks 01–07 (notebook 03 runs the full search, ~4 minutes)
 make dashboard   # streamlit run dashboards/app.py
 ```
@@ -122,6 +123,7 @@ src/ukstress/
   scenarios/engine.py     scenario runs, jump-off adjustment, £ losses (shared with the dashboard)
 models/                   champions, challengers, search results, scenario outputs
 notebooks/                one notebook per stage (01–07)
+learn/                    linear regression course: lessons 01–10, cheat sheet, glossary, interview questions
 docs/                     executive summary, model development document, validation report
 dashboards/app.py         Streamlit scenario builder
 reports/figures/          charts used in the docs
