@@ -1,6 +1,7 @@
 # UK Credit Stress Testing Engine
 
 [![ci](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml)
+[![Live dashboard](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://uk-credit-stress-engine.streamlit.app/)
 
 **If the UK enters the Bank of England's 2025 stress scenario, how much would UK lenders lose on credit cards, personal loans, mortgages and corporate lending, and how sure can we be?**
 
@@ -12,7 +13,7 @@ This project builds the macro **satellite models** that bank credit-risk teams u
 - 📄 [Executive summary](docs/executive_summary.md): the answer, for a risk committee
 - 📘 [Model development document](docs/model_development_document.md): data, method, champion models, limitations
 - ✅ [Independent validation report](docs/validation_report.md): backtests, benchmark, findings, ratings
-- 📊 Interactive dashboard: `make dashboard` (scenario builder with severity and driver sliders)
+- 📊 **[Live dashboard](https://uk-credit-stress-engine.streamlit.app/)**: scenario builder with severity and driver sliders (first visit may take ~30 s to wake up)
 - 🎓 **[Learn linear regression](learn/README.md)**: a 10-lesson course from basics to bank-grade modelling, taught on this project's data, with practice questions, a cheat sheet and 40 interview questions
 - 📓 Notebooks [01](notebooks/01_eda.ipynb) · [02](notebooks/02_ols_from_scratch.ipynb) · [03](notebooks/03_model_development.ipynb) · [04](notebooks/04_diagnostics.ipynb) · [05](notebooks/05_regularisation_panel.ipynb) · [06](notebooks/06_validation.ipynb) · [07](notebooks/07_scenario_projection.ipynb)
 
@@ -108,7 +109,7 @@ make notebooks   # re-execute notebooks 01–07 (notebook 03 runs the full searc
 make dashboard   # streamlit run dashboards/app.py
 ```
 
-To deploy the dashboard on Streamlit Community Cloud, point it at `dashboards/app.py`; dependencies are in `dashboards/requirements.txt`.
+The dashboard is deployed on Streamlit Community Cloud at **https://uk-credit-stress-engine.streamlit.app/** (entry point `dashboards/app.py`, dependencies in `dashboards/requirements.txt`).
 
 ## Repository layout
 
