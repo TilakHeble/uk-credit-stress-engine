@@ -1,6 +1,6 @@
 # UK credit losses under the Bank of England 2025 stress scenario
 
-*Executive summary for a risk committee. Figures are from [notebook 07](../notebooks/07_scenario_projection.ipynb); methods and limitations are in the [model development document](model_development_document.md) and [validation report](validation_report.md).*
+*Executive summary for a risk committee. Explore the scenarios yourself in the [live dashboard](https://uk-credit-stress-engine.streamlit.app/). Figures are from [notebook 07](../notebooks/07_scenario_projection.ipynb); methods and limitations are in the [model development document](model_development_document.md) and [validation report](validation_report.md).*
 
 ## The question
 

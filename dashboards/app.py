@@ -109,12 +109,12 @@ st.markdown(
 total = table["5-year losses £bn"].astype(float).sum()
 bal = jump_off_balances(panel)
 c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Five-year losses, four portfolios", f"£{total:,.1f}bn")
-c2.metric("Card loss rate, peak", f"{float(table.loc['credit_card', 'peak loss rate %']):.1f}%",
-          f"from {trailing_loss_rate(panel, 'credit_card').loc[JUMP_OFF]:.1f}% at end-2024", delta_color="off")
-c3.metric("Corporate loss rate, peak", f"{float(table.loc['corporate', 'peak loss rate %']):.2f}%")
-c4.metric("Peak unemployment", f"{path.loc[path.index > JUMP_OFF, 'unemployment'].max():.1f}%")
-c5.metric("Peak Bank Rate", f"{path.loc[path.index > JUMP_OFF, 'bank_rate'].max():.1f}%")
+c1.metric("5-yr losses", f"£{total:,.0f}bn", help="Five-year write-offs across the four portfolios")
+c2.metric("Card peak", f"{float(table.loc['credit_card', 'peak loss rate %']):.1f}%",
+          help=f"Peak annual card loss rate, from {trailing_loss_rate(panel, 'credit_card').loc[JUMP_OFF]:.1f}% at end-2024")
+c3.metric("Corp. peak", f"{float(table.loc['corporate', 'peak loss rate %']):.1f}%", help="Peak annual corporate loss rate")
+c4.metric("Unemp. peak", f"{path.loc[path.index > JUMP_OFF, 'unemployment'].max():.1f}%")
+c5.metric("Bank Rate peak", f"{path.loc[path.index > JUMP_OFF, 'bank_rate'].max():.1f}%")
 
 tab1, tab2, tab3, tab4 = st.tabs(["Loss projections", "Scenario paths", "Losses in £", "Models and validation"])
 
