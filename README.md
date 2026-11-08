@@ -2,7 +2,6 @@
 
 [![ci](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/TilakHeble/uk-credit-stress-engine/actions/workflows/ci.yml)
 [![Live dashboard](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://uk-credit-stress-engine.streamlit.app/)
-[![Live dashboard](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://uk-credit-stress-engine.streamlit.app/)
 
 **If the UK enters the Bank of England's 2025 stress scenario, how much would UK lenders lose on credit cards, personal loans, mortgages and corporate lending, and how sure can we be?**
 
